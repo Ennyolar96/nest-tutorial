@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email    String @unique
+  password String
+
+  firstName String?
+  lastName  String?
+
+  bookmarks bookmark[]
+
+  @@map("users") //telling prisma to rename the datebase to users not user
+}
+
+model bookmark {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  description String?
+  link        String
+
+  userId Int
+  user   user @relation(fields: [userId], references: [id])
+
+  @@map("bookmarks")
+}
+
+// npx prisma migrate dev
+// npx prisma --help
